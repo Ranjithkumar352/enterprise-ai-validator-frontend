@@ -190,75 +190,58 @@ export default function HistoryPage() {
   // PDF DOWNLOAD
   // =====================================
 
-  const downloadPDF = async (
-    dataset: Dataset
-  ) => {
-    try {
-      const token =
-        document.cookie
-          .split("; ")
-          .find((row) =>
-            row.startsWith("token=")
-          )
-          ?.split("=")[1];
+  const downloadPDF = async (dataset: Dataset) => {
+  try {
+    const token =
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
 
-      const response =
-        await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/reports/${dataset._id}/pdf`,
-          {
-            headers: token
-              ? {
-                  Authorization:
-                    `Bearer ${token}`,
-                }
-              : {},
-          }
-        );
-
-      if (!response.ok) {
-        throw new Error(
-          "PDF generation failed"
-        );
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/reports/${dataset._id}/pdf`,
+      {
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {},
       }
+    );
 
-      const blob =
-        await response.blob();
-
-      const url =
-        window.URL.createObjectURL(
-          blob
-        );
-
-      const link =
-        document.createElement("a");
-
-      link.href = url;
-
-      link.download =
-        `${dataset.originalName.replace(
-          /\.[^/.]+$/,
-          ""
-        )}-validation-report.pdf`;
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-
-      window.URL.revokeObjectURL(url);
-
-      toast.success(
-        "Validation report downloaded"
-      );
-    } catch (error) {
-      console.error(error);
-
-      toast.error(
-        "Failed to download report"
-      );
+    if (!response.ok) {
+      throw new Error("PDF generation failed");
     }
-  };
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+      `${dataset.originalName.replace(
+        /\.[^/.]+$/,
+        ""
+      )}-validation-report.pdf`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+
+    toast.success("Validation report downloaded");
+  } catch (error) {
+    console.error(error);
+
+    toast.error("Failed to download report");
+  }
+};
 
   // =====================================
   // CLEAN CSV DOWNLOAD
