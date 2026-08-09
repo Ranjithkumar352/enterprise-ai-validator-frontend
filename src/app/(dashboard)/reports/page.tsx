@@ -100,7 +100,7 @@ export default function ReportsPage() {
 
       const response =
         await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/reports/${selectedDataset._id}/pdf`,
+          `${process.env.NEXT_PUBLIC_API_URL}/reports/${selectedDataset._id}/pdf`,
           {
             method: "GET",
             headers: token
